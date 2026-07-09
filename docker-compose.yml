@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  student-risk-app:
+    build: .
+    container_name: student_risk_dashboard
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./instance:/app/instance
+      - ./templates:/app/templates
+      - ./static:/app/static
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+    restart: unless-stopped

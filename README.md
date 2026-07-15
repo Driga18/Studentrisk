@@ -1,126 +1,91 @@
 # Student Risk Dashboard
 
-A Flask-based web application for tracking and analyzing student risk levels based on academic performance, attendance, and financial metrics.
+A Flask-based application for tracking and analyzing student risk levels based on academic performance, attendance, and financial metrics.
 
 ## Features
 
 - ✅ SQLite database for persistent data storage
-- ✅ Beautiful glassmorphism UI with background imagery
-- ✅ Real-time risk assessment charts (Progress Overview & Risk Distribution)
-- ✅ Student management (Create, Read, Update, Delete)
-- ✅ Interactive dashboard with student details
-- ✅ Responsive web design
+- ✅ Glassmorphism-inspired UI
+- ✅ Student risk scoring and dashboard analytics
+- ✅ CRUD API for student records
+- ✅ Desktop application wrapper using PyWebView
 
-## Quick Start (Local)
+## Quick Start
 
 ### Prerequisites
 - Python 3.11+
 - pip
 
-### Installation
+### Install dependencies
 
-1. Clone/download the project
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
+```powershell
+cd c:\Users\ASUS\Desktop\Student_Risk
+python -m pip install -r requirements.txt
 ```
 
-3. Run the application:
-```bash
+### Run as a web app
+
+```powershell
 python app.py
 ```
 
-4. Open browser to: `http://localhost:5000/dashboard`
+Open your browser to `http://127.0.0.1:5000/dashboard`.
+
+### Run as a desktop app
+
+```powershell
+python desktop.py
+```
+
+This starts the Flask backend locally and opens a desktop window pointing to the dashboard.
 
 ## Docker Setup
 
-### Build and Run with Docker Compose (Recommended)
+### Build and run with Docker Compose (recommended)
 
-```bash
-# Build and run the container
+```powershell
 docker-compose up --build
-
-# Run in background
-docker-compose up -d --build
-
-# Stop the container
-docker-compose down
-
-# View logs
-docker-compose logs -f
 ```
 
-The app will be available at: `http://localhost:5000`
+### Build and run with Docker CLI
 
-### Build and Run with Docker CLI
-
-```bash
-# Build the image
+```powershell
 docker build -t student-risk-app .
-
-# Run the container
-docker run -d -p 5000:5000 \
-  -v $(pwd)/instance:/app/instance \
-  --name student_risk_dashboard \
-  student-risk-app
-
-# View logs
-docker logs -f student_risk_dashboard
-
-# Stop the container
-docker stop student_risk_dashboard
+docker run -d -p 5000:5000 --name student_risk_dashboard student-risk-app
 ```
 
 ## File Structure
 
 ```
 Student_Risk/
-├── app.py                 # Main Flask application
-├── config.py             # Configuration settings
-├── databaseOJ.py         # Database models
-├── routes.py             # API routes
-├── requirements.txt      # Python dependencies
-├── Dockerfile            # Docker image configuration
-├── docker-compose.yml    # Docker Compose configuration
-├── .dockerignore         # Files to exclude from Docker
-├── .gitignore            # Files to exclude from Git
-├── static/               # Static files (CSS, images)
-│   └── background.jpg    # Dashboard background
-├── templates/            # HTML templates
-│   └── dashboard.html    # Main dashboard page
-└── instance/             # SQLite database (auto-created)
+├── app.py
+├── config.py
+├── databaseOJ.py
+├── desktop.py
+├── routes.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── templates/
+│   └── dashboard.html
+├── static/
+│   └── background.jpg
+└── instance/
     └── student_risk.db
 ```
 
 ## API Endpoints
 
-### Students
 - `GET /students` - Get all students
 - `POST /students` - Create new student
 - `GET /students/<id>` - Get specific student
 - `PUT /students/<id>` - Update student
 - `DELETE /students/<id>` - Delete student
-
-### Web Pages
 - `GET /` - Home page
 - `GET /dashboard` - Main dashboard
 
-## Database
+## Notes
 
-The application uses SQLite for data storage. The database file (`student_risk.db`) is automatically created in the `instance/` directory on first run.
+- The desktop wrapper uses `pywebview` to create a native window.
+- The SQLite file is stored under `instance/student_risk.db`.
 
-## Environment Variables
-
-- `FLASK_ENV` - Set to `production` for Docker
-- `FLASK_APP` - Default: `app.py`
-
-## Technology Stack
-
-- **Backend**: Flask, Flask-SQLAlchemy
-- **Database**: SQLite
-- **Frontend**: HTML, CSS, Chart.js
-- **Containerization**: Docker, Docker Compose
-
-## License
-
-MIT

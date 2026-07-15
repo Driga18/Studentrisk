@@ -4,38 +4,244 @@
   <title>Student Risk Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: url('/static/background.jpg') no-repeat center center fixed; background-size: cover; color: #333; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-    h2 { text-align: center; margin-bottom: 20px; }
-    .grid { display: grid; gap: 20px; grid-template-columns: 1.7fr 1fr; margin-top: 0px; }
-    .card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 14px 30px rgba(24,39,75,0.1); padding: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
-    .charts { display: grid; gap: 18px; grid-template-columns: repeat(2, 1fr); max-height: 280px; margin-bottom: 80px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px 14px; border-bottom: 1px solid #ececec; }
-    th { background: #0f63ff; color: white; text-align: left; }
-    tbody tr:hover { background: #f2f7ff; cursor: pointer; }
-    .button { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-    .button-primary { background: #0f63ff; color: white; }
-    .button-danger { background: #e02f44; color: white; }
-    .button-secondary { background: #556dff; color: white; }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
-    .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; }
-    .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .detail-row .form-group { margin-bottom: 0; }
-    .empty-state { text-align: center; color: #666; padding: 28px 0; }
+    :root {
+      --primary: #0f63ff;
+      --primary-dark: #0a47b5;
+      --accent: #2bb673;
+      --danger: #e24b5a;
+      --text: #233142;
+      --muted: #6b7280;
+      --surface: rgba(255, 255, 255, 0.9);
+      --border: rgba(15, 99, 255, 0.12);
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background:
+        linear-gradient(rgba(244, 248, 255, 0.78), rgba(238, 244, 255, 0.78)),
+        url("{{ url_for('static', filename='background2.jpg') }}") center / cover fixed;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px;
+      box-sizing: border-box;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: var(--primary-dark);
+    }
+
+    .header-pill {
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-shadow: 0 6px 14px rgba(15, 99, 255, 0.18);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(17, 34, 68, 0.08);
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      color: var(--primary-dark);
+      font-size: 1.05rem;
+    }
+
+    .stats-row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .charts {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 20px;
+      align-items: start;
+    }
+
+    .chart-card canvas {
+      display: block;
+      width: 100% !important;
+      height: 180px !important;
+      max-height: 180px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #ececec;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+    }
+
+    tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #f2f7ff;
+      cursor: pointer;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(15, 99, 255, 0.15);
+    }
+
+    .button-primary { background: var(--primary); color: white; }
+    .button-danger { background: var(--danger); color: white; }
+    .button-secondary { background: var(--accent); color: white; }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d8e2f0;
+      border-radius: 10px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .detail-row .form-group {
+      margin-bottom: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 0;
+    }
+
+    @media (max-width: 900px) {
+      .charts,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Student Risk Dashboard</h2>
+    <div class="page-header">
+      <h2>Student Risk Dashboard</h2>
+      <div class="header-pill">Live student monitoring</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">High Risk</div>
+        <div class="stat-value" id="statHigh">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Attendance</div>
+        <div class="stat-value" id="statAttendance">0%</div>
+      </div>
+    </div>
 
     <div class="charts">
-      <div class="card">
+      <div class="card chart-card">
         <h3>Progress Overview</h3>
         <canvas id="barChart"></canvas>
       </div>
-      <div class="card">
+      <div class="card chart-card">
         <h3>Risk Distribution</h3>
         <canvas id="pieChart"></canvas>
       </div>
@@ -138,6 +344,11 @@
       const attendanceData = students.map(s => s.attendance);
       const feesData = students.map(s => s.fees_balance);
       const riskCounts = { High: 0, Medium: 0, Low: 0 };
+
+      document.getElementById('statTotal').textContent = students.length;
+      document.getElementById('statHigh').textContent = students.filter(s => s.risk === 'High').length;
+      const avgAttendance = students.length ? Math.round(students.reduce((sum, s) => sum + s.attendance, 0) / students.length) : 0;
+      document.getElementById('statAttendance').textContent = `${avgAttendance}%`;
 
       students.forEach(s => {
         if (riskCounts[s.risk] !== undefined) riskCounts[s.risk]++;

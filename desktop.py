@@ -1,5 +1,4 @@
 import logging
-import os
 import threading
 import time
 import urllib.error
@@ -7,7 +6,7 @@ import urllib.request
 import webbrowser
 
 import webview
-from app import app
+from app import app, initialize_database
 
 HOST = "127.0.0.1"
 PORT = 5000
@@ -36,7 +35,7 @@ logger = setup_logger()
 
 
 def start_flask():
-    os.makedirs("instance", exist_ok=True)
+    initialize_database()
     logger.info("Starting Flask server...")
     app.run(host=HOST, port=PORT, debug=False, use_reloader=False)
 
@@ -55,7 +54,7 @@ def wait_for_server(url, timeout=15):
 
 
 def start_desktop():
-    logger.info("Creating webview window.")
+    logger.info("Creating Edge WebView window.")
     webview.create_window(
         "Student Risk Dashboard",
         URL,
@@ -63,23 +62,15 @@ def start_desktop():
         height=850,
     )
 
-    backends = ["mshtml", "edgechromium", None]
-    for gui in backends:
-        try:
-            if gui:
-                logger.info(f"Trying pywebview backend: {gui}")
-                webview.start(debug=True, gui=gui)
-            else:
-                logger.info("Trying pywebview default backend")
-                webview.start(debug=True)
-            logger.info("pywebview started successfully.")
-            return
-        except Exception as exc:
-            logger.error(f"pywebview startup failed for gui={gui}: {exc}", exc_info=True)
-
-    logger.error("pywebview could not start any backend. Falling back to the browser.")
-    webbrowser.open(URL)
-    input("Press ENTER to exit...")
+    try:
+        # Starting pywebview more than once is unsupported.  Prefer the
+        # modern Edge engine over the unreliable legacy Internet Explorer one.
+        webview.start(debug=False, gui="edgechromium")
+        logger.info("Desktop window closed normally.")
+    except Exception:
+        logger.exception("Edge WebView could not start; opening the dashboard in the browser.")
+        webbrowser.open(URL)
+        input("Dashboard opened in your browser. Press ENTER to exit...")
 
 
 if __name__ == "__main__":

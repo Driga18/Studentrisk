@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template
 from databaseOJ import db, Student
 from routes import student_bp
@@ -11,6 +13,13 @@ db.init_app(app)
 
 # Register routes
 app.register_blueprint(student_bp, url_prefix="/students")
+
+
+def initialize_database():
+    """Create the persistent SQLite database and its tables if needed."""
+    os.makedirs(app.instance_path, exist_ok=True)
+    with app.app_context():
+        db.create_all()
 
 @app.route("/")
 def home():
@@ -38,6 +47,5 @@ def test_risk():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()  # Creates the 'students' table in SQLite
+    initialize_database()
     app.run(host="0.0.0.0", port=5000, debug=True)

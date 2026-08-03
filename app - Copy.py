@@ -9,17 +9,6 @@ app.config.from_object(Config)
 # Bind db to this app
 db.init_app(app)
 
-with app.app_context():
-    import time
-    for attempt in range(6):
-        try:
-            db.create_all()
-            break
-        except Exception as exc:
-            if attempt == 5:
-                raise
-            time.sleep(5)
-
 # Register routes
 app.register_blueprint(student_bp, url_prefix="/students")
 
@@ -50,5 +39,5 @@ def test_risk():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Creates the 'students' table in MySQL
-    app.run(host="0.0.0.0", debug=True)
+        db.create_all()  # Creates the 'students' table in SQLite
+    app.run(host="0.0.0.0", port=5000, debug=False)

@@ -1,0 +1,3 @@
+2026-07-09 13:10:53,016 INFO Starting Flask server...
+2026-07-09 13:10:53,558 INFO Creating webview window.
+2026-07-09 13:10:53,558 INFO Trying pywebview backend: mshtml

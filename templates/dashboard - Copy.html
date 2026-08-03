@@ -4,86 +4,26 @@
   <title>Student Risk Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      margin: 0; 
-      padding: 0; 
-      background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/static/background.jpg');
-      background-size: cover;
-      background-attachment: fixed;
-      background-position: center;
-      color: #333; 
-      min-height: 100vh;
-    }
-    .container { 
-      max-width: 1200px; 
-      margin: 0 auto; 
-      padding: 24px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 24px; 
-    }
-    h2 { 
-      text-align: center; 
-      margin-bottom: 0;
-      color: #fff;
-      font-size: 2.5em;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      letter-spacing: 0.5px;
-    }
-    .grid { display: grid; gap: 20px; grid-template-columns: 1.7fr 1fr; }
-    .card { 
-      background: rgba(230, 240, 255, 0.95); 
-      border-radius: 16px; 
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); 
-      padding: 22px; 
-      flex-shrink: 0;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(200, 220, 255, 0.3);
-    }
-    .card h3 {
-      margin: 0 0 16px 0;
-      color: #0f63ff;
-      font-size: 1.3em;
-    }
-    .charts { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); width: 100%; }
-    canvas { max-height: 200px; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: url('/static/background.jpg') no-repeat center center fixed; background-size: cover; color: #333; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    .grid { display: grid; gap: 20px; grid-template-columns: 1.7fr 1fr; margin-top: 0px; }
+    .card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 14px 30px rgba(24,39,75,0.1); padding: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
+    .charts { display: grid; gap: 18px; grid-template-columns: repeat(2, 1fr); max-height: 280px; margin-bottom: 80px; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px 14px; border-bottom: 1px solid #e0e0e0; }
-    th { background: linear-gradient(135deg, #0f63ff, #556dff); color: white; text-align: left; font-weight: 600; }
-    tbody tr:hover { background: rgba(15, 99, 255, 0.05); cursor: pointer; }
-    .button { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-    .button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
-    .button-primary { background: linear-gradient(135deg, #0f63ff, #556dff); color: white; }
-    .button-primary:hover { background: linear-gradient(135deg, #0a4dcc, #445acc); }
-    .button-danger { background: linear-gradient(135deg, #e02f44, #f44336); color: white; }
-    .button-danger:hover { background: linear-gradient(135deg, #c71c2a, #d32f2f); }
-    .button-secondary { background: linear-gradient(135deg, #556dff, #7b8cff); color: white; }
-    .button-secondary:hover { background: linear-gradient(135deg, #445acc, #6a7bcc); }
+    th, td { padding: 12px 14px; border-bottom: 1px solid #ececec; }
+    th { background: #0f63ff; color: white; text-align: left; }
+    tbody tr:hover { background: #f2f7ff; cursor: pointer; }
+    .button { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .button-primary { background: #0f63ff; color: white; }
+    .button-danger { background: #e02f44; color: white; }
+    .button-secondary { background: #556dff; color: white; }
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #0f63ff; }
-    .form-group input { 
-      width: 100%; 
-      padding: 10px 12px; 
-      border: 1.5px solid #e0e0e0; 
-      border-radius: 8px; 
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-    .form-group input:focus {
-      outline: none;
-      border-color: #0f63ff;
-      box-shadow: 0 0 0 3px rgba(15, 99, 255, 0.1);
-    }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; }
     .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .detail-row .form-group { margin-bottom: 0; }
-    .empty-state { text-align: center; color: #999; padding: 28px 0; font-style: italic; }
-    @media (max-width: 768px) {
-      .grid { grid-template-columns: 1fr; }
-      .detail-row { grid-template-columns: 1fr; }
-      .charts { grid-template-columns: 1fr; }
-      h2 { font-size: 1.8em; }
-    }
+    .empty-state { text-align: center; color: #666; padding: 28px 0; }
   </style>
 </head>
 <body>

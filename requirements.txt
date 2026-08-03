@@ -1,3 +1,5 @@
-Flask==2.3.0
-Flask-SQLAlchemy==3.0.5
-SQLAlchemy==2.0.15
+flask
+flask_sqlalchemy
+pymysql
+requests
+gunicorn

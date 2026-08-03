@@ -1,0 +1,27 @@
+# Use official Python runtime as base image
+FROM python:3.11-slim
+
+# Set working directory in container
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy entire application
+COPY . .
+
+# Create instance directory for SQLite database
+RUN mkdir -p instance
+
+# Render sends traffic to the port in the PORT environment variable.
+EXPOSE 10000
+
+# Environment variables
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+
+# Run the application
+CMD ["python", "app.py"]

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: student-risk
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: DATABASE_URL
+        value: mysql+pymysql://Driga@studentrisk:Tanatswa@1212@studentrisk.mysql.database.azure.com:3306/flexibleserverdb

@@ -1,16 +1,27 @@
-version: '3.8'
-
 services:
-  student-risk-app:
+  web:
     build: .
-    container_name: student_risk_dashboard
     ports:
       - "5000:5000"
-    volumes:
-      - ./instance:/app/instance
-      - ./templates:/app/templates
-      - ./static:/app/static
+    depends_on:
+      - db
+    env_file:
+      - .env
     environment:
-      - FLASK_ENV=production
-      - FLASK_APP=app.py
-    restart: unless-stopped
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: studentdb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Tanatswa@1212
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: studentdb
+      MYSQL_ROOT_PASSWORD: Tanatswa@1212
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

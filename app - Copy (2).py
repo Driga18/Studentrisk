@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template
 from databaseOJ import db, Student
 from routes import student_bp
@@ -9,19 +11,22 @@ app.config.from_object(Config)
 # Bind db to this app
 db.init_app(app)
 
-with app.app_context():
-    import time
-    for attempt in range(6):
-        try:
-            db.create_all()
-            break
-        except Exception as exc:
-            if attempt == 5:
-                raise
-            time.sleep(5)
-
 # Register routes
 app.register_blueprint(student_bp, url_prefix="/students")
+
+
+def initialize_database():
+    """Create the database tables if the database is reachable."""
+    os.makedirs(app.instance_path, exist_ok=True)
+    try:
+        with app.app_context():
+            db.create_all()
+    except Exception as exc:
+        print(f"Database initialization skipped: {exc}")
+
+
+# Run for WSGI imports on Render as well as direct `python app.py` starts.
+initialize_database()
 
 @app.route("/")
 def home():
@@ -49,6 +54,4 @@ def test_risk():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()  # Creates the 'students' table in MySQL
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)

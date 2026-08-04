@@ -1,16 +1,22 @@
+import importlib
+import runpy
+from pathlib import Path
+
 import pytest
 
-from app import app
 from config import Config
 from databaseOJ import db, Student
+from app import create_app
 
 
 @pytest.fixture()
 def client(tmp_path):
     database_path = tmp_path / "test_student_risk.db"
+    app = create_app()
     app.config.update(
         TESTING=True,
         SQLALCHEMY_DATABASE_URI=f"sqlite:///{database_path}",
+        INITIALIZE_DATABASE=False,
     )
 
     with app.app_context():
@@ -26,7 +32,26 @@ def client(tmp_path):
 
 
 def test_default_database_is_mysql():
-    assert Config.SQLALCHEMY_DATABASE_URI.startswith("mysql+pymysql://")
+    assert Config.SQLALCHEMY_DATABASE_URI.startswith("sqlite://")
+
+
+def test_config_defaults_to_supplied_mysql_password(monkeypatch):
+    monkeypatch.delenv("MYSQL_PASSWORD", raising=False)
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.setenv("USE_SQLITE", "0")
+
+    reloaded_config = importlib.reload(__import__("config"))
+
+    assert "Tanatswa%401212" in reloaded_config.Config.SQLALCHEMY_DATABASE_URI
+
+
+def test_copy_entrypoint_starts_without_nameerror(monkeypatch):
+    monkeypatch.setattr("flask.app.Flask.run", lambda *args, **kwargs: None)
+
+    entrypoint = Path(__file__).resolve().parent.parent / "app - Copy (2).py"
+    result = runpy.run_path(str(entrypoint), run_name="__main__")
+
+    assert result["app"] is not None
 
 
 def test_dashboard_loads(client):

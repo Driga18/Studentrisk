@@ -37,7 +37,7 @@ class Config:
     MYSQL_HOST = os.getenv("MYSQL_HOST", "studentrisk.mysql.database.azure.com")
     MYSQL_PORT = os.getenv("MYSQL_PORT", "3306")
     MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "flexibleserverdb")
-    MYSQL_USER = os.getenv("MYSQL_USER", "Driga@studentrisk")
+    MYSQL_USER = os.getenv("MYSQL_USER", "Driga")
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "Tanatswa@1212")  # plain text
 
     encoded_user = quote(MYSQL_USER, safe="")
@@ -56,4 +56,3 @@ class Config:
 
 print("MYSQL_USER:", os.getenv("MYSQL_USER"))
 print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
-     

@@ -16,16 +16,12 @@ def create_app(config_object=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    @app.before_first_request
-    def run_migrations():
-        if app.testing:
-            return
-
+    if app.config.get("INITIALIZE_DATABASE"):
         try:
-            upgrade()
-            app.logger.info("Database migration applied successfully.")
+            with app.app_context():
+                db.create_all()
         except Exception as exc:
-            app.logger.warning("Database migration failed: %s", exc)
+            app.logger.warning("Database table creation at startup skipped: %s", exc)
 
     def initialize_database():
         """Create the database tables if the database is reachable."""

@@ -53,3 +53,7 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {}
     if SQLALCHEMY_DATABASE_URI.startswith("mysql") and SSL_CA_FILE:
         SQLALCHEMY_ENGINE_OPTIONS = {"connect_args": {"ssl": {"ca": SSL_CA_FILE}}}
+
+print("MYSQL_USER:", os.getenv("MYSQL_USER"))
+print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
+     

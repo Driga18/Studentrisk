@@ -1,7 +1,10 @@
 from flask import Flask, render_template
+from flask_migrate import Migrate, upgrade
 from databaseOJ import db, Student
 from routes import student_bp
 from config import Config
+
+migrate = Migrate()
 
 
 def create_app(config_object=None):
@@ -9,8 +12,20 @@ def create_app(config_object=None):
     app.config.from_object(config_object or Config)
     app.config.setdefault("INITIALIZE_DATABASE", False)
 
-    # Bind db to this app
+    # Bind db and migration support to this app
     db.init_app(app)
+    migrate.init_app(app, db)
+
+    @app.before_first_request
+    def run_migrations():
+        if app.testing:
+            return
+
+        try:
+            upgrade()
+            app.logger.info("Database migration applied successfully.")
+        except Exception as exc:
+            app.logger.warning("Database migration failed: %s", exc)
 
     def initialize_database():
         """Create the database tables if the database is reachable."""

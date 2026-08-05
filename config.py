@@ -38,14 +38,13 @@ class Config:
     MYSQL_PORT = os.getenv("MYSQL_PORT", "3306")
     MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "flexibleserverdb")
     MYSQL_USER = os.getenv("MYSQL_USER", "Driga@studentrisk")
-    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "Tanatswa%401212")
+    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "Tanatswa@1212")  # plain text
 
     encoded_user = quote(MYSQL_USER, safe="")
     encoded_password = quote(MYSQL_PASSWORD, safe="")
 
     SSL_CA_FILE = get_ssl_ca_file()
 
-    # Always use Azure MySQL, no SQLite fallback
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{encoded_user}:{encoded_password}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
     )
